@@ -1,5 +1,8 @@
 use app_io::*;
-use gtest::{Log, Program, System};
+use gstd::Encode;
+use gtest::{Program, System};
+mod utils;
+use crate::utils::prepare_test_data;
 
 #[test]
 fn test() {
@@ -12,51 +15,18 @@ fn test() {
 
     assert!(!result.main_failed());
 
-    result = program.send(2, PingPong::Pong);
+    let (aggregated_signature, signed_messages, public_keys) =
+        prepare_test_data(vec!["test1", "test2", "test3"]);
 
-    assert!(result.log().is_empty());
+    result = program.send(
+        2,
+        Action::Verify(Verify {
+            signature: aggregated_signature,
+            messages: signed_messages,
+            public_keys,
+        }),
+    );
 
-    // meta_state()
-
-    // AppStateQueryReply::AllState
-
-    let mut expected_state = vec![];
-
-    for mut actor in 0..=100 {
-        actor += 2;
-        result = program.send(actor, PingPong::Ping);
-
-        assert!(result.contains(&Log::builder().payload(PingPong::Pong)));
-
-        expected_state.push((actor.into(), 1))
-    }
-
-    let mut state = if let StateQueryReply::AllState(state) =
-        program.meta_state(StateQuery::AllState).unwrap()
-    {
-        state
-    } else {
-        unreachable!();
-    };
-
-    expected_state.sort();
-    state.0.sort();
-
-    assert_eq!(state.0, expected_state);
-
-    // AppStateQueryReply::PingCount
-
-    result = program.send(2, PingPong::Ping);
-
-    assert!(result.contains(&Log::builder().payload(PingPong::Pong)));
-
-    let ping_count = if let StateQueryReply::PingCount(ping_count) =
-        program.meta_state(StateQuery::PingCount(2.into())).unwrap()
-    {
-        ping_count
-    } else {
-        unreachable!();
-    };
-
-    assert_eq!(ping_count, 2);
+    assert!(result.contains(&(2, Event::Verified.encode())));
+    assert!(!result.contains(&(2, Event::NotVerified.encode())));
 }
