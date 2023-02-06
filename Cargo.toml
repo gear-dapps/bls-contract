@@ -7,7 +7,7 @@ authors = ["Gear Technologies"]
 
 [dependencies]
 app-io = { path = "io" }
-gstd = { git = "https://github.com/gear-tech/gear.git", branch = "stable", default-features = false }
+gstd = { git = "https://github.com/gear-tech/gear.git", branch = "stable" }
 gmeta = { git = "https://github.com/gear-tech/gear.git", branch = "stable" }
 hashbrown = "0.13"
 sharks = { version = "0.5.0", default-features = false }
@@ -18,6 +18,7 @@ sha2 = { version = "0.9", default-features = false }
 hkdf = { version = "0.11.0", default-features = false }
 ff = { version = "0.12", default-features = false }
 rand_core = { version = "0.6.4", default-features = false }
+chrono = { version = "0.4", default-features = false, features = ["time", "iana-time-zone",] }
 
 #bls_amcl = { git = "https://github.com/lovesh/signature-schemes.git" }
 #bls12_381 = "0.7.1"
@@ -34,7 +35,7 @@ gear-wasm-builder = { git = "https://github.com/gear-tech/gear.git", branch = "s
 [dev-dependencies]
 app-state = { path = "state" }
 gtest = { git = "https://github.com/gear-tech/gear.git" }
-gstd = { git = "https://github.com/gear-tech/gear.git", branch = "stable", default-features = false }
+gstd = { git = "https://github.com/gear-tech/gear.git", branch = "stable" }
 tokio = "1"
 gclient = { git = "https://github.com/gear-tech/gear.git" }
 

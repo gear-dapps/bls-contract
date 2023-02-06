@@ -40,8 +40,11 @@ pub fn prepare_test_data(messages: Vec<&str>) -> (Vec<u8>, Vec<Vec<u8>>, Vec<Vec
         "failed to verify"
     );
 
-    let aggregated_signature = aggregated_signature.to_bytes();
-    let public_keys = public_keys.iter().map(|key| key.as_bytes()).collect();
+    let aggregated_signature = aggregated_signature.to_uncompressed_bytes();
+    let public_keys = public_keys
+        .iter()
+        .map(|key| key.to_uncompressed_bytes())
+        .collect();
 
     (aggregated_signature, messages, public_keys)
 }

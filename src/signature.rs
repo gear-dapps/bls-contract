@@ -54,6 +54,19 @@ impl Signature {
     pub fn as_bytes(&self) -> Vec<u8> {
         self.0.to_compressed().to_vec()
     }
+
+    pub fn to_uncompressed_bytes(&self) -> Vec<u8> {
+        self.0.to_uncompressed().to_vec()
+    }
+
+    pub fn from_uncompressed_bytes(raw: &[u8]) -> Result<Self, Error> {
+        let mut array = [0u8; 192];
+        for (i, byte) in array.iter_mut().enumerate() {
+            *byte = raw[i];
+        }
+        let g2 = G2Affine::from_uncompressed(&array).unwrap();
+        Ok(g2.into())
+    }
 }
 
 pub fn g2_from_slice(raw: &[u8]) -> Result<G2Affine, Error> {
@@ -149,7 +162,25 @@ pub fn verify_messages(
     messages: &[&[u8]],
     public_keys: &[PublicKey],
 ) -> bool {
-    let hashes: Vec<_> = messages.iter().map(|msg| hash(msg)).collect();
+    let hashes: Vec<_> = messages
+        .iter()
+        .map(|msg| {
+            let gas_available = gstd::exec::gas_available();
+            gstd::debug!("before hash gas_available = {}", gas_available);
+            let hash = hash(msg);
+            gstd::debug!("after hash gas_available = {}", gstd::exec::gas_available());
+            hash
+        })
+        .collect();
 
-    verify(signature, &hashes, public_keys)
+    let gas_available = gstd::exec::gas_available();
+    gstd::debug!("before verify gas_available = {}", gas_available);
+    let result = verify(signature, &hashes, public_keys);
+
+    gstd::debug!(
+        "after verify gas_available = {}",
+        gstd::exec::gas_available()
+    );
+
+    result
 }
