@@ -12,7 +12,7 @@ gmeta = { git = "https://github.com/gear-tech/gear.git", branch = "stable" }
 hashbrown = "0.13"
 sharks = { version = "0.5.0", default-features = false }
 rand_chacha = { version = "0.3.1", default-features = false }
-bls12_381 = { version = "=0.7.1", features = ["experimental"] }
+bls12_381 = { version = "=0.7.1", features = ["experimental", "nightly"] }
 pairing_lib = { version = "0.22.0", package = "pairing" }
 sha2 = { version = "0.9", default-features = false }
 hkdf = { version = "0.11.0", default-features = false }
@@ -37,7 +37,7 @@ app-state = { path = "state" }
 gtest = { git = "https://github.com/gear-tech/gear.git" }
 gstd = { git = "https://github.com/gear-tech/gear.git", branch = "stable" }
 tokio = "1"
-gclient = { git = "https://github.com/gear-tech/gear.git" }
+#gclient = { git = "https://github.com/gear-tech/gear.git" }
 
 rand = "0.8"
 base64 = "0.13.0"
