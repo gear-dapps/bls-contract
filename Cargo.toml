@@ -1,5 +1,5 @@
 [package]
-name = "app"
+name = "bls"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
@@ -7,9 +7,30 @@ authors = ["Gear Technologies"]
 
 [dependencies]
 app-io = { path = "io" }
-gstd = { git = "https://github.com/gear-tech/gear.git", branch = "stable" }
+gstd = { git = "https://github.com/gear-tech/gear.git", features = ["debug"], branch = "stable" }
 gmeta = { git = "https://github.com/gear-tech/gear.git", branch = "stable" }
 hashbrown = "0.13"
+
+#sharks = { version = "0.5.0", default-features = false }
+
+rand_chacha = { version = "0.3.1", default-features = false }
+#bls12_381 = { version = "=0.7.1", features = ["experimental", "nightly"] }
+bls12_381 = { path = "../bls12_381", features = ["experimental", "nightly"] }
+pairing_lib = { version = "0.22.0", package = "pairing" }
+sha2 = { version = "0.9", default-features = false }
+hkdf = { version = "0.11.0", default-features = false }
+ff = { version = "0.12", default-features = false }
+rand_core = { version = "0.6.4", default-features = false }
+chrono = { version = "0.4", default-features = false, features = ["time", "iana-time-zone",] }
+
+#bls_amcl = { git = "https://github.com/lovesh/signature-schemes.git" }
+#bls12_381 = "0.7.1"
+#blsttc = "8"
+#blst = { version = "0.3.10", default-features = false, features = ["no-threads"] }
+#bls-signatures = { git = "https://github.com/filecoin-project/bls-signatures" }
+#bls = "0.0.0"
+#threshold-bls-ffi = { git = "https://github.com/celo-org/celo-threshold-bls-rs.git", features = ["wasm"] }
+#threshold_crypto = { version = "0.4", git = "https://github.com/poanetwork/threshold_crypto" }
 
 [build-dependencies]
 app-io = { path = "io" }
@@ -17,10 +38,20 @@ gear-wasm-builder = { git = "https://github.com/gear-tech/gear.git", branch = "s
 
 [dev-dependencies]
 app-state = { path = "state" }
-gtest = { git = "https://github.com/gear-tech/gear.git" }
-gstd = { git = "https://github.com/gear-tech/gear.git", branch = "stable", features = ["debug"] }
-tokio = "1"
-gclient = { git = "https://github.com/gear-tech/gear.git" }
+gtest = { git = "https://github.com/gear-tech/gear.git", branch = "stable" }
+gstd = { git = "https://github.com/gear-tech/gear.git", features = ["debug"], branch = "stable" }
+#tokio = "1"
+#gclient = { git = "https://github.com/gear-tech/gear.git", branch = "stable" }
+
+rand = "0.8"
+base64 = "0.13.0"
+serde = { version = "1.0.106", features = ["derive"] }
+serde_json = "1.0.52"
+base64-serde = "0.6.1"
+rand_chacha = "0.3.1"
+
+#[patch.crates-io]
+#bls12_381 = { path = "../bls12_381" }
 
 [features]
 # Used for inserting constants with WASM binaries (NOT paths) of the contract in

@@ -1,19 +1,44 @@
 #![no_std]
 
-use gmeta::{InOut, Metadata};
+use gmeta::{In, InOut, Metadata};
 use gstd::{prelude::*, ActorId};
 
+#[derive(Encode, Decode, TypeInfo, Hash, PartialEq, PartialOrd, Eq, Ord, Clone, Debug)]
+pub enum Action {
+    Verify(Verify),
+    VerifyHashes(VerifyHashes)
+}
+
+#[derive(Encode, Decode, TypeInfo, Hash, PartialEq, PartialOrd, Eq, Ord, Clone, Debug)]
+pub struct Verify {
+    pub signature: Vec<u8>,
+    pub messages: Vec<Vec<u8>>,
+    pub public_keys: Vec<Vec<u8>>,
+}
+
+#[derive(Encode, Decode, TypeInfo, Hash, PartialEq, PartialOrd, Eq, Ord, Clone, Debug)]
+pub struct VerifyHashes {
+    pub signature: Vec<u8>,
+    pub hashes: Vec<Vec<Vec<Vec<u64>>>>,
+    pub public_keys: Vec<Vec<u8>>,
+}
+
 #[derive(Encode, Decode, TypeInfo, Hash, PartialEq, PartialOrd, Eq, Ord, Clone, Copy, Debug)]
-pub enum PingPong {
-    Ping,
-    Pong,
+pub enum Event {
+    Verified,
+    NotVerified,
+}
+
+#[derive(Encode, Decode, TypeInfo, Hash, PartialEq, PartialOrd, Eq, Ord, Clone, Debug)]
+pub enum Error {
+    PreviousTxMustBeCompleted,
 }
 
 pub struct ContractMetadata;
 
 impl Metadata for ContractMetadata {
-    type Init = ();
-    type Handle = InOut<PingPong, PingPong>;
+    type Init = In<()>;
+    type Handle = InOut<Action, Event>;
     type Others = ();
     type Reply = ();
     type Signal = ();
@@ -21,32 +46,15 @@ impl Metadata for ContractMetadata {
 }
 
 #[derive(Encode, Decode, TypeInfo, Hash, PartialEq, PartialOrd, Eq, Ord, Clone, Debug, Default)]
-pub struct State(pub Vec<(ActorId, u128)>);
-
-#[doc(hidden)]
-impl State {
-    pub fn pingers(self) -> Vec<ActorId> {
-        self.0.into_iter().map(|pingers| pingers.0).collect()
-    }
-
-    pub fn ping_count(self, actor: ActorId) -> u128 {
-        self.0
-            .into_iter()
-            .find_map(|(pinger, ping_count)| (pinger == actor).then_some(ping_count))
-            .unwrap_or_default()
-    }
+pub struct State {
+    pub transactions: BTreeMap<ActorId, Transaction<Action>>,
+    pub current_tid: TransactionId,
 }
 
-#[derive(Encode, Decode, TypeInfo, Hash, PartialEq, PartialOrd, Eq, Ord, Clone, Copy, Debug)]
-pub enum StateQuery {
-    AllState,
-    Pingers,
-    PingCount(ActorId),
-}
+pub type TransactionId = u64;
 
 #[derive(Encode, Decode, TypeInfo, Hash, PartialEq, PartialOrd, Eq, Ord, Clone, Debug)]
-pub enum StateQueryReply {
-    AllState(<ContractMetadata as Metadata>::State),
-    Pingers(Vec<ActorId>),
-    PingCount(u128),
+pub struct Transaction<T> {
+    pub transaction_id: TransactionId,
+    pub action: T,
 }
