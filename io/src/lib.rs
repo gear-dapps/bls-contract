@@ -6,12 +6,20 @@ use gstd::{prelude::*, ActorId};
 #[derive(Encode, Decode, TypeInfo, Hash, PartialEq, PartialOrd, Eq, Ord, Clone, Debug)]
 pub enum Action {
     Verify(Verify),
+    VerifyHashes(VerifyHashes)
 }
 
 #[derive(Encode, Decode, TypeInfo, Hash, PartialEq, PartialOrd, Eq, Ord, Clone, Debug)]
 pub struct Verify {
     pub signature: Vec<u8>,
     pub messages: Vec<Vec<u8>>,
+    pub public_keys: Vec<Vec<u8>>,
+}
+
+#[derive(Encode, Decode, TypeInfo, Hash, PartialEq, PartialOrd, Eq, Ord, Clone, Debug)]
+pub struct VerifyHashes {
+    pub signature: Vec<u8>,
+    pub hashes: Vec<Vec<Vec<Vec<u64>>>>,
     pub public_keys: Vec<Vec<u8>>,
 }
 

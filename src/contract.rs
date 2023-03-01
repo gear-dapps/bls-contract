@@ -1,6 +1,7 @@
 use crate::key::PublicKey;
 use crate::signature::{self, Signature};
 use app_io::*;
+use bls12_381::G2Projective;
 use gmeta::Metadata;
 use gstd::{
     errors::{ContractError, Result as GstdResult},
@@ -102,6 +103,30 @@ fn process_handle() -> Result<(), ContractError> {
 
             gstd::debug!("AZOYAN deserialized messages = {:?}", messages);
             let is_verified = signature::verify_messages(&signature, messages, &public_keys);
+
+            match is_verified {
+                true => Event::Verified,
+                false => Event::NotVerified,
+            }
+        }
+        Action::VerifyHashes(VerifyHashes {
+            signature,
+            hashes,
+            public_keys,
+        }) => {
+            let signature = Signature::from_uncompressed_bytes(&signature).unwrap();
+            let public_keys: Vec<PublicKey> = public_keys
+                .iter()
+                .map(|key| {
+                    PublicKey::from_uncompressed_bytes(key)
+                        .expect("Can't deserialize PublicKey from Vec<u8>")
+                })
+                .collect();
+            gstd::debug!("AZOYAN deserialized public_keys = {:?}", public_keys);
+
+            let hashes: Vec<G2Projective> = hashes.iter().map(|s| G2Projective::from(s)).collect();
+            
+            let is_verified = signature::verify_hashes(&signature, hashes, &public_keys);
 
             match is_verified {
                 true => Event::Verified,

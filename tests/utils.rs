@@ -2,10 +2,11 @@ use bls::{
     key::PrivateKey,
     signature::{aggregate, hash, verify, Signature},
 };
+use bls12_381::G2Projective;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 
-pub fn prepare_test_data(messages: Vec<&str>) -> (Vec<u8>, Vec<Vec<u8>>, Vec<Vec<u8>>) {
+pub fn prepare_test_data(messages: Vec<&str>) -> (Vec<u8>, Vec<Vec<u8>>, Vec<Vec<u8>>, Vec<G2Projective>) {
     let mut rng = ChaCha8Rng::seed_from_u64(12);
 
     let num_messages = messages.len();
@@ -46,5 +47,5 @@ pub fn prepare_test_data(messages: Vec<&str>) -> (Vec<u8>, Vec<Vec<u8>>, Vec<Vec
         .map(|key| key.to_uncompressed_bytes())
         .collect();
 
-    (aggregated_signature, messages, public_keys)
+    (aggregated_signature, messages, public_keys, hashes)
 }

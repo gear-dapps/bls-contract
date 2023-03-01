@@ -184,3 +184,24 @@ pub fn verify_messages(
 
     result
 }
+
+
+/// Verifies that the signature is the actual aggregated signature of messages - pubkeys.
+/// Calculated by `e(g1, signature) == \prod_{i = 0}^n e(pk_i, hash_i)`.
+pub fn verify_hashes(
+    signature: &Signature,
+    hashes: Vec<G2Projective>,
+    public_keys: &[PublicKey],
+) -> bool {
+
+    let gas_available = gstd::exec::gas_available();
+    gstd::debug!("before verify gas_available = {}", gas_available);
+    let result = verify(signature, &hashes, public_keys);
+
+    // gstd::debug!(
+    //     "after verify gas_available = {}",
+    //     gstd::exec::gas_available()
+    // );
+
+    result
+}
