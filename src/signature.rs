@@ -117,7 +117,7 @@ pub fn verify(signature: &Signature, hashes: &[G2Projective], public_keys: &[Pub
     if n_hashes == 1 && public_keys[0].0.is_identity().into() {
         return false;
     }
-
+    gstd::debug!("before cycle by hashes gas_available() = {}", gstd::exec::gas_available());
     // Enforce that messages are distinct as a countermeasure against BLS's rogue-key attack.
     // See Section 3.1. of the IRTF's BLS signatures spec:
     // https://tools.ietf.org/html/draft-irtf-cfrg-bls-signature-02#section-3.1
@@ -130,7 +130,7 @@ pub fn verify(signature: &Signature, hashes: &[G2Projective], public_keys: &[Pub
     }
 
     let mut is_valid = true;
-
+    gstd::debug!("before multi_first miller_loop() gas_available() = {}", gstd::exec::gas_available());
     let mut ml = public_keys
         .iter()
         .zip(hashes.iter())
@@ -147,11 +147,11 @@ pub fn verify(signature: &Signature, hashes: &[G2Projective], public_keys: &[Pub
     if !is_valid {
         return false;
     }
-
+    gstd::debug!("before -G1Affine::generator()() gas_available() = {}", gstd::exec::gas_available());
     let g1_neg = -G1Affine::generator();
-
+    gstd::debug!("before multi_miller_loop() gas_available() = {}", gstd::exec::gas_available());
     ml += Bls12::multi_miller_loop(&[(&g1_neg, &signature.0.into())]);
-
+    gstd::debug!("before final_exponentiation() gas_available() = {}", gstd::exec::gas_available());
     ml.final_exponentiation() == Gt::identity()
 }
 
@@ -165,10 +165,10 @@ pub fn verify_messages(
     let hashes: Vec<_> = messages
         .iter()
         .map(|msg| {
-            let gas_available = gstd::exec::gas_available();
-            gstd::debug!("before hash gas_available = {}", gas_available);
+            // let gas_available = gstd::exec::gas_available();
+            // gstd::debug!("before hash gas_available = {}", gas_available);
             let hash = hash(msg);
-            gstd::debug!("after hash gas_available = {}", gstd::exec::gas_available());
+            // gstd::debug!("after hash gas_available = {}", gstd::exec::gas_available());
             hash
         })
         .collect();
@@ -177,10 +177,10 @@ pub fn verify_messages(
     gstd::debug!("before verify gas_available = {}", gas_available);
     let result = verify(signature, &hashes, public_keys);
 
-    gstd::debug!(
-        "after verify gas_available = {}",
-        gstd::exec::gas_available()
-    );
+    // gstd::debug!(
+    //     "after verify gas_available = {}",
+    //     gstd::exec::gas_available()
+    // );
 
     result
 }

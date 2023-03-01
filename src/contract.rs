@@ -72,11 +72,11 @@ fn process_handle() -> Result<(), ContractError> {
         );
         transaction_id
     };
-    gstd::debug!(
-        "AZOYAN Action = {:?}, gas = {}",
-        action,
-        gstd::exec::gas_available()
-    );
+    // gstd::debug!(
+    //     "AZOYAN Action = {:?}, gas = {}",
+    //     action,
+    //     gstd::exec::gas_available()
+    // );
     let result = match action {
         Action::Verify(Verify {
             signature,
@@ -84,11 +84,11 @@ fn process_handle() -> Result<(), ContractError> {
             public_keys,
         }) => {
             let signature = Signature::from_uncompressed_bytes(&signature).unwrap();
-            gstd::debug!(
-                "AZOYAN deserialized signature = {:?}, gas = {}",
-                signature,
-                gstd::exec::gas_available()
-            );
+            // gstd::debug!(
+            //     "AZOYAN deserialized signature = {:?}, gas = {}",
+            //     signature,
+            //     gstd::exec::gas_available()
+            // );
             let public_keys: Vec<PublicKey> = public_keys
                 .iter()
                 .map(|key| {

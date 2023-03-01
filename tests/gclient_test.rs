@@ -6,7 +6,6 @@ mod utils;
 use crate::utils::prepare_test_data;
 
 #[tokio::test]
-#[ignore]
 async fn gclient_test() -> Result<()> {
     let client = GearApi::dev()
         .await

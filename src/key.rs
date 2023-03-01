@@ -154,47 +154,47 @@ impl PublicKey {
 
         let mut res = [0u8; G1_COMPRESSED_SIZE];
         res.as_mut().copy_from_slice(raw);
-        gstd::debug!(
-            "AZOYAN decompressing, gas = {}",
-            gstd::exec::gas_available()
-        );
+        // gstd::debug!(
+        //     "AZOYAN decompressing, gas = {}",
+        //     gstd::exec::gas_available()
+        // );
         let affine: G1Affine =
             Option::from(G1Affine::from_compressed(&res)).ok_or(Error::GroupDecode)?;
-        gstd::debug!(
-            "AZOYAN decompress complete, gas = {}",
-            gstd::exec::gas_available()
-        );
+        // gstd::debug!(
+        //     "AZOYAN decompress complete, gas = {}",
+        //     gstd::exec::gas_available()
+        // );
 
         let result = Ok(PublicKey(affine.into()));
 
-        gstd::debug!(
-            "AZOYAN coverto to PublicKey complete, gas = {}",
-            gstd::exec::gas_available()
-        );
+        // gstd::debug!(
+        //     "AZOYAN coverto to PublicKey complete, gas = {}",
+        //     gstd::exec::gas_available()
+        // );
         result
     }
 
     pub fn from_uncompressed_bytes(raw: &[u8]) -> Result<Self, Error> {
         let mut res = [0u8; 96];
         res.as_mut().copy_from_slice(raw);
-        gstd::debug!(
-            "AZOYAN decompressing, gas = {}",
-            gstd::exec::gas_available()
-        );
+        // gstd::debug!(
+        //     "AZOYAN decompressing, gas = {}",
+        //     gstd::exec::gas_available()
+        // );
 
         let affine: G1Affine =
             Option::from(G1Affine::from_uncompressed(&res)).ok_or(Error::GroupDecode)?;
-        gstd::debug!(
-            "AZOYAN decompress complete, gas = {}",
-            gstd::exec::gas_available()
-        );
+        // gstd::debug!(
+        //     "AZOYAN decompress complete, gas = {}",
+        //     gstd::exec::gas_available()
+        // );
 
         let result = Ok(PublicKey(affine.into()));
 
-        gstd::debug!(
-            "AZOYAN coverto to PublicKey complete, gas = {}",
-            gstd::exec::gas_available()
-        );
+        // gstd::debug!(
+        //     "AZOYAN coverto to PublicKey complete, gas = {}",
+        //     gstd::exec::gas_available()
+        // );
         result
     }
 
